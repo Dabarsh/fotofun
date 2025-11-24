@@ -1,3 +1,4 @@
 .vscode/
 src/fotofun/imgs/
 .DS_Store
+/out/
