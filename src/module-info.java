@@ -1,3 +1,3 @@
-module name {
+module fotofun {
     requires java.desktop;
 }
