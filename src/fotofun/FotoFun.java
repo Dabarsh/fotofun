@@ -10,12 +10,24 @@ public class FotoFun {
     private final String format;
 
     public FotoFun(File sourceFile) throws Exception {
-        image = ImageIO.read(sourceFile);
+        BufferedImage read = ImageIO.read(sourceFile);
+        if (read == null) {
+            throw new IOException("Unable to read image data from " + sourceFile.getName());
+        }
+        BufferedImage converted = new BufferedImage(read.getWidth(), read.getHeight(), BufferedImage.TYPE_INT_RGB);
+        converted.getGraphics().drawImage(read, 0, 0, null);
+        this.image = converted;
         format = fileFormat(sourceFile.getName());
     }
 
     private FotoFun(BufferedImage image, String format) {
-        this.image = image;
+        if (image.getType() != BufferedImage.TYPE_INT_RGB) {
+            BufferedImage converted = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+            converted.getGraphics().drawImage(image, 0, 0, null);
+            this.image = converted;
+        } else {
+            this.image = image;
+        }
         this.format = format;
     }
 
@@ -24,8 +36,7 @@ public class FotoFun {
     }
 
     public FotoFun copy() {
-        BufferedImage clone = new BufferedImage(image.getWidth(), image.getHeight(),
-                image.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : image.getType());
+        BufferedImage clone = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
         clone.getGraphics().drawImage(image, 0, 0, null);
         return new FotoFun(clone, format);
     }
@@ -58,6 +69,30 @@ public class FotoFun {
                 int newR = g; // R becomes old G
                 int newG = b; // G becomes old B
                 int newB = r; // B becomes old R
+
+                int newRgb = (a << 24) | (newR << 16) | (newG << 8) | newB;
+                image.setRGB(x, y, newRgb);
+            }
+        }
+    }
+    public void brighten() {
+        final int INCREMENT = 67; // increase per channel (0-255)
+        int w = image.getWidth();
+        int h = image.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int rgb = image.getRGB(x, y);
+                int a = (rgb >> 24) & 0xFF;
+                int r = (rgb >> 16) & 0xFF;
+                int g = (rgb >> 8) & 0xFF;
+                int b = rgb & 0xFF;
+
+                int newR = r + INCREMENT;
+                if (newR > 255) newR = 255;
+                int newG = g + INCREMENT;
+                if (newG > 255) newG = 255;
+                int newB = b + INCREMENT;
+                if (newB > 255) newB = 255;
 
                 int newRgb = (a << 24) | (newR << 16) | (newG << 8) | newB;
                 image.setRGB(x, y, newRgb);
