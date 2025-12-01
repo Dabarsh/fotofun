@@ -44,6 +44,26 @@ public class FotoFun {
         }
         return new FotoFun(uploaded, "jpg").copy();
     }
+    public void shiftColors() {
+        int w = image.getWidth();
+        int h = image.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int rgb = image.getRGB(x, y);
+                int a = (rgb >> 24) & 0xFF;
+                int r = (rgb >> 16) & 0xFF;
+                int g = (rgb >> 8) & 0xFF;
+                int b = rgb & 0xFF;
+
+                int newR = g; // R becomes old G
+                int newG = b; // G becomes old B
+                int newB = r; // B becomes old R
+
+                int newRgb = (a << 24) | (newR << 16) | (newG << 8) | newB;
+                image.setRGB(x, y, newRgb);
+            }
+        }
+    }
 
     private static String fileFormat(String name) {
         int dot = name.lastIndexOf('.') + 1;
