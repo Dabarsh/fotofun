@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.*;
 import java.awt.image.*;
+import java.awt.Color;
 
 public class FotoFun {
     private final BufferedImage image;
@@ -61,16 +62,16 @@ public class FotoFun {
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 int rgb = image.getRGB(x, y);
-                int a = (rgb >> 24) & 0xFF;
-                int r = (rgb >> 16) & 0xFF;
-                int g = (rgb >> 8) & 0xFF;
-                int b = rgb & 0xFF;
+                Color c = new Color(rgb, false);
+                int r = c.getRed();
+                int g = c.getGreen();
+                int b = c.getBlue();
 
                 int newR = g; // R becomes old G
                 int newG = b; // G becomes old B
                 int newB = r; // B becomes old R
 
-                int newRgb = (a << 24) | (newR << 16) | (newG << 8) | newB;
+                int newRgb = (newR << 16) | (newG << 8) | newB;
                 image.setRGB(x, y, newRgb);
             }
         }
@@ -82,10 +83,10 @@ public class FotoFun {
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 int rgb = image.getRGB(x, y);
-                int a = (rgb >> 24) & 0xFF;
-                int r = (rgb >> 16) & 0xFF;
-                int g = (rgb >> 8) & 0xFF;
-                int b = rgb & 0xFF;
+                Color c = new Color(rgb, false);
+                int r = c.getRed();
+                int g = c.getGreen();
+                int b = c.getBlue();
 
                 int newR = r + INCREMENT;
                 if (newR > 255) newR = 255;
@@ -94,7 +95,7 @@ public class FotoFun {
                 int newB = b + INCREMENT;
                 if (newB > 255) newB = 255;
 
-                int newRgb = (a << 24) | (newR << 16) | (newG << 8) | newB;
+                int newRgb = (newR << 16) | (newG << 8) | newB;
                 image.setRGB(x, y, newRgb);
             }
         }
