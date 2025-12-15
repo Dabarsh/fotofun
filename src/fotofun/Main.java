@@ -26,6 +26,7 @@ public class Main {
 
             File shiftedFile = new File(parent, base + "_shifted" + ext);
             File brightFile  = new File(parent, base + "_bright" + ext);
+            File grayFile    = new File(parent, base + "_gray" + ext);
 
             System.out.println("Creating shifted copy...");
             FotoFun shifted = original.copy();
@@ -38,6 +39,12 @@ public class Main {
             bright.brighten();
             bright.save(brightFile);
             System.out.println("Saved: " + brightFile.getPath());
+
+            System.out.println("Creating grayscale copy...");
+            FotoFun gray = original.copy();
+            gray.grayscale();
+            gray.save(grayFile);
+            System.out.println("Saved: " + grayFile.getPath());
         } catch (Exception e) {
             System.err.println("Processing failed: " + e.getMessage());
             e.printStackTrace();

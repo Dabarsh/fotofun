@@ -77,7 +77,7 @@ public class FotoFun {
         }
     }
     public void brighten() {
-        final int INCREMENT = 67; // increase per channel (0-255)
+        final int INCREMENT = 100; // increase per channel (0-255)
         int w = image.getWidth();
         int h = image.getHeight();
         for (int y = 0; y < h; y++) {
@@ -96,6 +96,24 @@ public class FotoFun {
                 if (newB > 255) newB = 255;
 
                 int newRgb = (newR << 16) | (newG << 8) | newB;
+                image.setRGB(x, y, newRgb);
+            }
+        }
+    }
+
+    public void grayscale() {
+        int w = image.getWidth();
+        int h = image.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int rgb = image.getRGB(x, y);
+                Color c = new Color(rgb, false);
+                int r = c.getRed();
+                int g = c.getGreen();
+                int b = c.getBlue();
+
+                int gray = (r + g + b) / 3;
+                int newRgb = (gray << 16) | (gray << 8) | gray;
                 image.setRGB(x, y, newRgb);
             }
         }
