@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Starting FotoFun...");
 
-        String inputPath = "src/fotofun/imgs/IMG_8600.jpg";
+        String inputPath = "src/fotofun/imgs/bird.jpg";
         File source = new File(inputPath);
         if (!source.exists()) {
             System.err.println("Source not found: " + source.getPath());
@@ -27,6 +27,8 @@ public class Main {
             File shiftedFile = new File(parent, base + "_shifted" + ext);
             File brightFile  = new File(parent, base + "_bright" + ext);
             File grayFile    = new File(parent, base + "_gray" + ext);
+            File bwFile      = new File(parent, base + "_bw" + ext);
+            File invertFile  = new File(parent, base + "_inverted" + ext);
 
             System.out.println("Creating shifted copy...");
             FotoFun shifted = original.copy();
@@ -45,6 +47,18 @@ public class Main {
             gray.grayscale();
             gray.save(grayFile);
             System.out.println("Saved: " + grayFile.getPath());
+
+            System.out.println("Creating black-and-white copy...");
+            FotoFun bw = original.copy();
+            bw.blackAndWhite();
+            bw.save(bwFile);
+            System.out.println("Saved: " + bwFile.getPath());
+
+            System.out.println("Creating inverted copy...");
+            FotoFun inv = original.copy();
+            inv.invert();
+            inv.save(invertFile);
+            System.out.println("Saved: " + invertFile.getPath());
         } catch (Exception e) {
             System.err.println("Processing failed: " + e.getMessage());
             e.printStackTrace();

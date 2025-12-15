@@ -119,6 +119,46 @@ public class FotoFun {
         }
     }
 
+    public void blackAndWhite() {
+        int w = image.getWidth();
+        int h = image.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int rgb = image.getRGB(x, y);
+                Color c = new Color(rgb, false);
+                int r = c.getRed();
+                int g = c.getGreen();
+                int b = c.getBlue();
+
+                int avg = (r + g + b) / 3;
+                int bw = (avg >= 128) ? 255 : 0; // threshold at mid-point
+                int newRgb = (bw << 16) | (bw << 8) | bw;
+                image.setRGB(x, y, newRgb);
+            }
+        }
+    }
+
+    public void invert() {
+        int w = image.getWidth();
+        int h = image.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int rgb = image.getRGB(x, y);
+                Color c = new Color(rgb, false);
+                int r = c.getRed();
+                int g = c.getGreen();
+                int b = c.getBlue();
+
+                int newR = 255 - r;
+                int newG = 255 - g;
+                int newB = 255 - b;
+
+                int newRgb = (newR << 16) | (newG << 8) | newB;
+                image.setRGB(x, y, newRgb);
+            }
+        }
+    }
+
     private static String fileFormat(String name) {
         int dot = name.lastIndexOf('.') + 1;
         return dot == 0 ? "png" : name.substring(dot).toLowerCase();
