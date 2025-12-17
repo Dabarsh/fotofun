@@ -9,6 +9,8 @@ import java.awt.Color;
 public class FotoFun {
     private final BufferedImage image;
     private final String format;
+    private final String sourceName; // file name
+    private final String sourceDir;  // file directory
 
     public FotoFun(File sourceFile) throws Exception {
         BufferedImage read = ImageIO.read(sourceFile);
@@ -19,9 +21,11 @@ public class FotoFun {
         converted.getGraphics().drawImage(read, 0, 0, null);
         this.image = converted;
         format = fileFormat(sourceFile.getName());
+        sourceName = fileBaseName(sourceFile.getName());
+        sourceDir = sourceFile.getParent();
     }
 
-    private FotoFun(BufferedImage image, String format) {
+    private FotoFun(BufferedImage image, String format, String sourceName, String sourceDir) {
         if (image.getType() != BufferedImage.TYPE_INT_RGB) {
             BufferedImage converted = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
             converted.getGraphics().drawImage(image, 0, 0, null);
@@ -30,6 +34,8 @@ public class FotoFun {
             this.image = image;
         }
         this.format = format;
+        this.sourceName = sourceName;
+        this.sourceDir = sourceDir;
     }
 
     public void save(File destinationFile) throws Exception {
@@ -39,7 +45,7 @@ public class FotoFun {
     public FotoFun copy() {
         BufferedImage clone = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
         clone.getGraphics().drawImage(image, 0, 0, null);
-        return new FotoFun(clone, format);
+        return new FotoFun(clone, format, sourceName, sourceDir);
     }
 
     public static FotoFun uploadJpg(File sourceFile) throws Exception {
@@ -54,7 +60,7 @@ public class FotoFun {
         if (uploaded == null) {
             throw new IOException("Unable to read image data from " + sourceFile.getName());
         }
-        return new FotoFun(uploaded, "jpg").copy();
+        return new FotoFun(uploaded, "jpg", fileBaseName(sourceFile.getName()), sourceFile.getParent()).copy();
     }
     public void shiftColors() {
         int w = image.getWidth();
@@ -159,8 +165,58 @@ public class FotoFun {
         }
     }
 
+    public File concatenate() {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+
+        FotoFun processed = this.copy();
+
+
+        BufferedImage result = new BufferedImage(width * 2, height, BufferedImage.TYPE_INT_RGB);
+
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int rgb = image.getRGB(x, y);
+                result.setRGB(x, y, rgb);
+            }
+        }
+
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int rgb = processed.image.getRGB(x, y);
+                result.setRGB(x + width, y, rgb);
+            }
+        }
+
+        String outName = sourceName + "_concat." + format;
+        File outFile;
+        if (sourceDir == null) {
+            outFile = new File(outName);
+        } else {
+            outFile = new File(sourceDir, outName);
+        }
+
+        try {
+            ImageIO.write(result, format, outFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write concatenated image: " + e.getMessage(), e);
+        }
+
+        return outFile;
+    }
+
     private static String fileFormat(String name) {
         int dot = name.lastIndexOf('.') + 1;
-        return dot == 0 ? "png" : name.substring(dot).toLowerCase();
+        return dot == 0 ? "jpg" : name.substring(dot).toLowerCase();
+    }
+
+
+    private static String fileBaseName(String name) {
+        int dotIdx = name.lastIndexOf('.');
+        if (dotIdx == -1) return name;
+        return name.substring(0, dotIdx);
     }
 }

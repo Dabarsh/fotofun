@@ -59,6 +59,11 @@ public class Main {
             inv.invert();
             inv.save(invertFile);
             System.out.println("Saved: " + invertFile.getPath());
+
+
+            System.out.println("Creating concatenated copy...");
+            java.io.File concatFile = original.concatenate();
+            System.out.println("Saved: " + concatFile.getPath());
         } catch (Exception e) {
             System.err.println("Processing failed: " + e.getMessage());
             e.printStackTrace();
