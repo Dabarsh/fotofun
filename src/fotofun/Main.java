@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Starting FotoFun...");
 
-        String inputPath = "src/fotofun/imgs/bird.jpg";
+        String inputPath = "src/fotofun/imgs/heart.jpg";
         File source = new File(inputPath);
         if (!source.exists()) {
             System.err.println("Source not found: " + source.getPath());
@@ -59,6 +59,13 @@ public class Main {
             inv.invert();
             inv.save(invertFile);
             System.out.println("Saved: " + invertFile.getPath());
+
+            System.out.println("Creating shrunk (half-size) copy...");
+            File shrinkFile = new File(parent, base + "_shrink" + ext);
+            FotoFun shr = original.copy();
+            shr.shrink();
+            shr.save(shrinkFile);
+            System.out.println("Saved: " + shrinkFile.getPath());
 
 
             System.out.println("Creating concatenated copy...");

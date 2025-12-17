@@ -7,7 +7,7 @@ import java.awt.image.*;
 import java.awt.Color;
 
 public class FotoFun {
-    private final BufferedImage image;
+    private BufferedImage image;
     private final String format;
     private final String sourceName; // file name
     private final String sourceDir;  // file directory
@@ -169,12 +169,8 @@ public class FotoFun {
         int width = image.getWidth();
         int height = image.getHeight();
 
-
         FotoFun processed = this.copy();
-
-
         BufferedImage result = new BufferedImage(width * 2, height, BufferedImage.TYPE_INT_RGB);
-
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -182,8 +178,6 @@ public class FotoFun {
                 result.setRGB(x, y, rgb);
             }
         }
-
-
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int rgb = processed.image.getRGB(x, y);
@@ -206,6 +200,76 @@ public class FotoFun {
         }
 
         return outFile;
+    }
+
+
+    public void shrink() {
+        int oldW = image.getWidth();
+        int oldH = image.getHeight();
+        int newW = Math.max(1, oldW / 2);
+        int newH = Math.max(1, oldH / 2);
+
+        BufferedImage small = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_RGB);
+
+
+        for (int y = 0; y < newH; y++) {
+            for (int x = 0; x < newW; x++) {
+                int srcX = x * 2;
+                int srcY = y * 2;
+
+                int sumR = 0;
+                int sumG = 0;
+                int sumB = 0;
+                int count = 0;
+
+                // top-left
+                if (srcX < oldW && srcY < oldH) {
+                    int rgb = image.getRGB(srcX, srcY);
+                    Color c = new Color(rgb, false);
+                    sumR += c.getRed();
+                    sumG += c.getGreen();
+                    sumB += c.getBlue();
+                    count++;
+                }
+                // top-right
+                if (srcX + 1 < oldW && srcY < oldH) {
+                    int rgb = image.getRGB(srcX + 1, srcY);
+                    Color c = new Color(rgb, false);
+                    sumR += c.getRed();
+                    sumG += c.getGreen();
+                    sumB += c.getBlue();
+                    count++;
+                }
+                // bottom-left
+                if (srcX < oldW && srcY + 1 < oldH) {
+                    int rgb = image.getRGB(srcX, srcY + 1);
+                    Color c = new Color(rgb, false);
+                    sumR += c.getRed();
+                    sumG += c.getGreen();
+                    sumB += c.getBlue();
+                    count++;
+                }
+                // bottom-right
+                if (srcX + 1 < oldW && srcY + 1 < oldH) {
+                    int rgb = image.getRGB(srcX + 1, srcY + 1);
+                    Color c = new Color(rgb, false);
+                    sumR += c.getRed();
+                    sumG += c.getGreen();
+                    sumB += c.getBlue();
+                    count++;
+                }
+
+                int avgR = sumR / count;
+                int avgG = sumG / count;
+                int avgB = sumB / count;
+
+                int newRgb = (avgR << 16) | (avgG << 8) | avgB;
+                small.setRGB(x, y, newRgb);
+            }
+        }
+
+        // replace the internal image reference with the smaller one
+        this.image = small;
     }
 
     private static String fileFormat(String name) {
