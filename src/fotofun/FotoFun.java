@@ -184,7 +184,6 @@ public class FotoFun {
                 result.setRGB(x + width, y, rgb);
             }
         }
-
         String outName = sourceName + "_concat." + format;
         File outFile;
         if (sourceDir == null) {
@@ -192,13 +191,11 @@ public class FotoFun {
         } else {
             outFile = new File(sourceDir, outName);
         }
-
         try {
             ImageIO.write(result, format, outFile);
         } catch (IOException e) {
             throw new RuntimeException("Failed to write concatenated image: " + e.getMessage(), e);
         }
-
         return outFile;
     }
 
@@ -270,6 +267,21 @@ public class FotoFun {
 
         // replace the internal image reference with the smaller one
         this.image = small;
+    }
+
+
+    public void mirror() {
+        int w = image.getWidth();
+        int h = image.getHeight();
+        int half = w / 2;
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < half; x++) {
+                int color = image.getRGB(x, y);
+                int dstX = w - 1 - x;
+                image.setRGB(dstX, y, color);
+            }
+        }
     }
 
     private static String fileFormat(String name) {

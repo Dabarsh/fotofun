@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Starting FotoFun...");
 
-        String inputPath = "src/fotofun/imgs/heart.jpg";
+        String inputPath = "src/fotofun/imgs/img_8600.jpg";
         File source = new File(inputPath);
         if (!source.exists()) {
             System.err.println("Source not found: " + source.getPath());
@@ -67,6 +67,13 @@ public class Main {
             shr.save(shrinkFile);
             System.out.println("Saved: " + shrinkFile.getPath());
 
+            // Mirror: left half mirrored onto right
+            System.out.println("Creating mirrored copy...");
+            File mirrorFile = new File(parent, base + "_mirror" + ext);
+            FotoFun mir = original.copy();
+            mir.mirror();
+            mir.save(mirrorFile);
+            System.out.println("Saved: " + mirrorFile.getPath());
 
             System.out.println("Creating concatenated copy...");
             java.io.File concatFile = original.concatenate();
