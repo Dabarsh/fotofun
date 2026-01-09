@@ -165,6 +165,60 @@ public class FotoFun {
         }
     }
 
+
+    public void vignette() {
+
+
+        int w = image.getWidth();
+        int h = image.getHeight();
+        int cx = w / 2; // center x
+        int cy = h / 2; // center y
+
+        // max distance from center to a corner
+        double maxDist = Math.sqrt(cx * cx + cy * cy);
+        if (maxDist == 0) return; // dont mess up small images
+
+        // strength  of effect
+        double strength = 1;
+
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int rgb = image.getRGB(x, y);
+                int r = (rgb >> 16) & 0xFF;
+                int g = (rgb >> 8) & 0xFF;
+                int b = rgb & 0xFF;
+
+                // distance from center
+                double dx = x - cx;
+                double dy = y - cy;
+                double dist = Math.sqrt(dx * dx + dy * dy);
+
+
+                double norm = dist / maxDist;
+
+                // factor reduces brightness toward edges
+                double factor = 1.0 - strength * (norm * norm);
+                if (factor < 0) factor = 0;
+
+
+                int newR = (int) (r * factor);
+                if (newR < 0) newR = 0;
+                if (newR > 255) newR = 255;
+
+                int newG = (int) (g * factor);
+                if (newG < 0) newG = 0;
+                if (newG > 255) newG = 255;
+
+                int newB = (int) (b * factor);
+                if (newB < 0) newB = 0;
+                if (newB > 255) newB = 255;
+
+                int newRgb = (newR << 16) | (newG << 8) | newB;
+                image.setRGB(x, y, newRgb);
+            }
+        }
+    }
+
     public File concatenate() {
         int width = image.getWidth();
         int height = image.getHeight();
@@ -198,7 +252,6 @@ public class FotoFun {
         }
         return outFile;
     }
-
 
     public void shrink() {
         int oldW = image.getWidth();
@@ -269,7 +322,6 @@ public class FotoFun {
         this.image = small;
     }
 
-
     public void mirror() {
         int w = image.getWidth();
         int h = image.getHeight();
@@ -288,8 +340,6 @@ public class FotoFun {
         int dot = name.lastIndexOf('.') + 1;
         return dot == 0 ? "jpg" : name.substring(dot).toLowerCase();
     }
-
-
     private static String fileBaseName(String name) {
         int dotIdx = name.lastIndexOf('.');
         if (dotIdx == -1) return name;

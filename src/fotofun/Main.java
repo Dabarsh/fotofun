@@ -1,4 +1,3 @@
-// java
 package fotofun;
 
 import java.io.File;
@@ -7,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Starting FotoFun...");
 
-        String inputPath = "src/fotofun/imgs/img_8600.jpg";
+        String inputPath = "src/fotofun/imgs/IMG_8600.jpg";
         File source = new File(inputPath);
         if (!source.exists()) {
             System.err.println("Source not found: " + source.getPath());
@@ -25,10 +24,10 @@ public class Main {
             String ext = dot > 0 ? name.substring(dot) : ".jpg";
 
             File shiftedFile = new File(parent, base + "_shifted" + ext);
-            File brightFile  = new File(parent, base + "_bright" + ext);
-            File grayFile    = new File(parent, base + "_gray" + ext);
-            File bwFile      = new File(parent, base + "_bw" + ext);
-            File invertFile  = new File(parent, base + "_inverted" + ext);
+            File brightFile = new File(parent, base + "_bright" + ext);
+            File grayFile = new File(parent, base + "_gray" + ext);
+            File bwFile = new File(parent, base + "_bw" + ext);
+            File invertFile = new File(parent, base + "_inverted" + ext);
 
             System.out.println("Creating shifted copy...");
             FotoFun shifted = original.copy();
@@ -67,13 +66,19 @@ public class Main {
             shr.save(shrinkFile);
             System.out.println("Saved: " + shrinkFile.getPath());
 
-            // Mirror: left half mirrored onto right
             System.out.println("Creating mirrored copy...");
             File mirrorFile = new File(parent, base + "_mirror" + ext);
             FotoFun mir = original.copy();
             mir.mirror();
             mir.save(mirrorFile);
             System.out.println("Saved: " + mirrorFile.getPath());
+
+            System.out.println("Creating vignette copy...");
+            File vignetteFile = new File(parent, base + "_vignette" + ext);
+            FotoFun vig = original.copy();
+            vig.vignette();
+            vig.save(vignetteFile);
+            System.out.println("Saved: " + vignetteFile.getPath());
 
             System.out.println("Creating concatenated copy...");
             java.io.File concatFile = original.concatenate();
