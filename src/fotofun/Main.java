@@ -28,6 +28,7 @@ public class Main {
             File grayFile = new File(parent, base + "_gray" + ext);
             File bwFile = new File(parent, base + "_bw" + ext);
             File invertFile = new File(parent, base + "_inverted" + ext);
+            File redTintFile = new File(parent, base + "_redtint" + ext);
 
             System.out.println("Creating shifted copy...");
             FotoFun shifted = original.copy();
@@ -58,6 +59,12 @@ public class Main {
             inv.invert();
             inv.save(invertFile);
             System.out.println("Saved: " + invertFile.getPath());
+
+            System.out.println("Creating red-tinted copy...");
+            FotoFun red = original.copy();
+            red.redTint();
+            red.save(redTintFile);
+            System.out.println("Saved: " + redTintFile.getPath());
 
             System.out.println("Creating shrunk (half-size) copy...");
             File shrinkFile = new File(parent, base + "_shrink" + ext);

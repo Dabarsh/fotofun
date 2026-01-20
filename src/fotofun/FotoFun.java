@@ -166,6 +166,33 @@ public class FotoFun {
     }
 
 
+    public void redTint() {
+        double alpha = 0.25; // overlay strength
+        int w = image.getWidth();
+        int h = image.getHeight();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                int rgb = image.getRGB(x, y);
+                Color c = new Color(rgb, false);
+                int r = c.getRed();
+                int g = c.getGreen();
+                int b = c.getBlue();
+
+                int newR = (int) (r * (1.0 - alpha) + 255 * alpha);
+                int newG = (int) (g * (1.0 - alpha));
+                int newB = (int) (b * (1.0 - alpha));
+
+                if (newR < 0) newR = 0; if (newR > 255) newR = 255;
+                if (newG < 0) newG = 0; if (newG > 255) newG = 255;
+                if (newB < 0) newB = 0; if (newB > 255) newB = 255;
+
+                int newRgb = (newR << 16) | (newG << 8) | newB;
+                image.setRGB(x, y, newRgb);
+            }
+        }
+    }
+
+
     public void vignette() {
 
 
